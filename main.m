@@ -1,5 +1,5 @@
 a = 1;
-v = VideoReader('squash_vid_10sek.mp4');
+v = VideoReader('ten_sek.mp4');
 v.CurrentTime = 2.5;
 
 currAxes = axes;
