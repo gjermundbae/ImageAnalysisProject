@@ -2,7 +2,8 @@
 
 %load sampleFrames.mat
 subplot(1,4,1)
-img = imread("142.jpg");
+%img = imread('frames2\142.jpg');
+img = imread('frames2\77.jpg');
 imshow(img)
 size(img)
 
@@ -10,6 +11,7 @@ size(img)
 
 % Convert RGB image to chosen color space
 I = rgb2hsv(img);
+I_2 = rgb2gray(img);
 
 % Define thresholds for channel 1 based on histogram settings
 channel1Min = 0.000;
@@ -28,6 +30,9 @@ sliderBW = (I(:,:,1) >= channel1Min ) & (I(:,:,1) <= channel1Max) & ...
     (I(:,:,2) >= channel2Min ) & (I(:,:,2) <= channel2Max) & ...
     (I(:,:,3) >= channel3Min ) & (I(:,:,3) <= channel3Max);
 BW = sliderBW;
+
+subplot(1,4,2)
+imshow(BW);
 
 subplot(1,4,2)
 imshow(BW);
@@ -69,70 +74,5 @@ imshow(Itext);
 %% Clean up
 
 release(hBlobAnalysis)
-
-%% Loop
-
-%% Setup
-% Create object to read video frames from the video file
-
-vidReader = vision.VideoFileReader();
-vidReader.VideoOutputDataType = 'double';
-
-%Create structural element for morphological operations to remove
-%disturbances
-diskElem = strel('disk',2);
-
-hBlobAnalysis = vision.BlobAnalysis('MinimumBlobArea',8,...
-    'MaximumBlobArea',10); %
-[objArea, objCentroid, bboxOut] = step(hBlobAnalysis, Ibwopen);
-
-%% Alg in loop
-while ~isDone(vidReader)
-
-    %Read Frame
-    vidFrame = step(vidReader);
-
-    %Convert RGB image to chosen color space
-    Ihsv = rgb2hsv(vidFrame);
-
-    % Define thresholds for channel 1 based on histogram settings
-    channel1Min = 0.000;
-    channel1Max = 1.000;
-    
-    % Define thresholds for channel 2 based on histogram settings
-    channel2Min = 0.000;
-    channel2Max = 1.000;
-    
-    % Define thresholds for channel 3 based on histogram settings
-    channel3Min = 0.000;
-    channel3Max = 0.164;
-    
-    % Create mask based on chosen histogram thresholds
-    Ibw = (I(:,:,1) >= channel1Min ) & (I(:,:,1) <= channel1Max) & ...
-        (I(:,:,2) >= channel2Min ) & (I(:,:,2) <= channel2Max) & ...
-        (I(:,:,3) >= channel3Min ) & (I(:,:,3) <= channel3Max);
-    %BW = sliderBW;
-
-
-    % Use morphological operations to remove disturbances
-    Ibwopen = imopen(Ibw, diskElem);
-
-    % Extract blobs from the frame
-    [objArea, objCentroid, bboxOut] = step(hBlobAnalysis, Ibwopen);
-
-    % Insert a string of number of objects detected in the video frame
-    numObj = length(areaOut);
-
-    % Draw box around detected objects and insert text
-    Ishape = insertShape(vidFrame, 'rectangle',bboxOut,'LineWidth',2);
-    Ishape_text = insertText(Ishape, [20,20], int32(numObj),'FontSize', 40);
-
-    step(vidPlayer, Ishape_text);
-
-end
-
-%% Cleanup
-release(vidReader)
-release(hB)
 
 

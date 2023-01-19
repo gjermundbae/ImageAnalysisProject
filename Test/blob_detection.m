@@ -11,6 +11,7 @@ size(img)
 
 % Convert RGB image to chosen color space
 I = rgb2hsv(img);
+I_2 = rgb2gray(img);
 
 % Define thresholds for channel 1 based on histogram settings
 channel1Min = 0.000;
@@ -33,13 +34,16 @@ BW = sliderBW;
 subplot(1,4,2)
 imshow(BW);
 
+subplot(1,4,3)
+imshow(I_2);
+
 %% Remove disturbances
 %Create structural element
 diskElem = strel('disk',1);
 Ibwclose = imclose(BW,diskElem);
 Ibwopen = imopen(BW,diskElem);
-subplot(1,4,3)
-imshow(Ibwopen);
+%subplot(1,4,3)
+%imshow(Ibwopen);
 subplot(1,4,4)
 imshow(Ibwclose);
 %% Blob analysis
