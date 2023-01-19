@@ -2,7 +2,8 @@
 
 %load sampleFrames.mat
 subplot(1,4,1)
-img = imread("142.jpg");
+%img = imread('frames2\142.jpg');
+img = imread('frames2\77.jpg');
 imshow(img)
 size(img)
 
@@ -59,12 +60,15 @@ subplot(1,2,1)
 imshow(Ishape);
 
 numObj = numel(objArea);
-hTextIns = vision.insertText('%d', 'Location',[20,20],'Color',...
-    [255 255 0], 'FontSize', 30);
-Itext = step(hTextIns, Ishape, int32(numObj));
+%hTextIns = insertText('%d', 'Location',[20,20],'Color',...
+%    [255 255 0], 'FontSize', 30);
+Itext = insertText(Ishape, [20,20], int32(numObj),'FontSize', 40);
 
 subplot(1,2,2)
 imshow(Itext);
 
+%% Clean up
+
+release(hBlobAnalysis)
 
 
