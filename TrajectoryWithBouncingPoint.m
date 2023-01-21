@@ -5,6 +5,7 @@ clc
 
 %% Reading the video
 video = vision.VideoFileReader('CAM1.mov');
+video_frames = read(VideoReader('CAM1.mov'));
 player = vision.DeployableVideoPlayer('Location', [10,100]);
 
 %%Detect the ball
@@ -77,6 +78,34 @@ figure, imshow(image)
 hold on
 plot(pos(:,1),pos(:,2),'r-o','LineWidth',2)
 plot(bouncePoints(:,1),bouncePoints(:,2),'xr','LineWidth',7, 'Color', 'b')
+
+%% Get points then project wall and floor in the moment of bounce
+bounce_wall_index = bouncePoints(1,3); %get_bounce_wall_index(allframes); Need function from Simen
+bounce_floor_index = bouncePoints(2,3);%get_bounce_floor_index(allframes); Need function from Simen
+
+bounce_image_wall = video_frames(:,:,:,bounce_wall_index);
+bounce_image_floor = video_frames(:,:,:,bounce_floor_index);
+
+[a,b,c,d] = get_points(bounce_image_wall, 'wall');
+[e,f,g,h] = get_points(bounce_image_floor, 'floor');
+
+rect_wall = [0 0;0 183;640 183;640 0];
+rect_floor = [0 0;0 549;640,549;640,0];
+
+tr_wall = make_transform(a,b,c,d, rect_wall);
+tr_floor = make_transform(e,f,g,h, rect_floor);
+
+im_wall = view_bounce(bounce_image_wall, tr_wall, rect_wall, 'wall');
+im_floor = view_bounce(bounce_image_floor, tr_floor, rect_floor, 'floor');
+
+figure
+subplot(121)
+imshow(im_wall);
+title('Wall Bounce');
+subplot(122)
+imshow(im_floor);
+title('Floor Bounce')
+
 
 %% Release reader and player object
 release(video);
