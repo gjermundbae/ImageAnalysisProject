@@ -1,10 +1,10 @@
 function [p1,p2,p3,p4] = get_points(im, type)
 
-    bounce = figure;
+    figure;
     
     % keeps on drawing multiple elements on the same figure
     hold on;
-    subplot(2, 3, [1 4]) 
+     
     if strcmp(type, 'wall')
         imshow('ex_wall.jpg')
     else
@@ -13,7 +13,7 @@ function [p1,p2,p3,p4] = get_points(im, type)
     end
     title('Click on the corners in order and press enter')
     % select six visible verteces of the cube
-    subplot(2, 3, [2 3 5 6]) 
+    bounce = figure;
     imshow(im);
     title(type);
     [x, y]=getpts(bounce);

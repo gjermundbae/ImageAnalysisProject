@@ -14,11 +14,14 @@ fgPlayer = vision.DeployableVideoPlayer('Location', player.Location + [500 120])
 blobAnalyzer = vision.BlobAnalysis('AreaOutputPort', true, 'MinimumBlobArea', 10, 'CentroidOutputPort', true);
 
 frameNr = 1;
-
+crop_x = 100;
+crop_y = 10;
+crop_width = 1000;
+crop_height = 1000;
 while ~isDone(video)
     
     im = step(video);
-    image = imcrop(im,[100,10,1000,1000]);
+    image = imcrop(im,[crop_x, crop_y, crop_width, crop_height]);
     %image = step(video);
     I = rgb2gray(image);
     %detect ball
@@ -82,24 +85,54 @@ plot(bouncePoints(:,1),bouncePoints(:,2),'xr','LineWidth',7, 'Color', 'b')
 %% Get points then project wall and floor in the moment of bounce
 bounce_wall_index = bouncePoints(1,3); %get_bounce_wall_index(allframes); Need function from Simen
 bounce_floor_index = bouncePoints(2,3);%get_bounce_floor_index(allframes); Need function from Simen
+bounce_wall_pos = bouncePoints(1,1:2) + [crop_x, crop_y];
+bounce_floor_pos = bouncePoints(2,1:2) + [crop_x, crop_y];
+
 
 bounce_image_wall = video_frames(:,:,:,bounce_wall_index);
 bounce_image_floor = video_frames(:,:,:,bounce_floor_index);
 
-[a,b,c,d] = get_points(bounce_image_wall, 'wall');
-[e,f,g,h] = get_points(bounce_image_floor, 'floor');
+a = [115;420;1];
+b = [112;722;1];
+c = [1004;684;1];
+d = [1004;466;1];
+e = [112;722;1];
+f = [50;910;1];
+g = [1601;745;1];
+h = [1004;684;1];
 
-rect_wall = [0 0;0 457;640 457;640 0];
+
+%[a,b,c,d] = get_points(bounce_image_wall, 'wall');
+%[e,f,g,h] = get_points(bounce_image_floor, 'floor');
+
+rect_wall = [0 -183;0 0;640 0;640 -183];
 rect_floor = [0 0;0 549;640,549;640,0];
 
 tr_wall = make_transform(a,b,c,d, rect_wall);
 tr_floor = make_transform(e,f,g,h, rect_floor);
 
+% Sending the contact points through the transformation as well
+[x_wall, y_wall] = tformfwd(tr_wall,bounce_wall_pos(1),bounce_wall_pos(2));
+[x_floor, y_floor] = tformfwd(tr_floor,bounce_floor_pos(1),bounce_floor_pos(2));
+
 im_wall = view_bounce(bounce_image_wall, tr_wall, rect_wall, 'wall');
 im_floor = view_bounce(bounce_image_floor, tr_floor, rect_floor, 'floor');
 
-figure, imshow(im_wall);
-figure, imshow(im_floor);
+bounce = figure;
+subplot(121)
+
+[rows_wall, columns_wall, numberOfColorChannels] = size(im_wall);
+
+% determining if it is a valid serve or not
+valid = check_if_valid(x
+
+im_wall = insertShape(im_wall,"FilledCircle",[x_wall, rows_wall+y_wall 4], 'Color', 'red');
+imshow(im_wall);
+title('Wall Bounce');
+subplot(122)
+im_floor = insertShape(im_floor,"FilledCircle",[x_floor, y_floor 4]);
+imshow(im_floor);
+title('Floor Bounce')
 
 
 %% Release reader and player object
