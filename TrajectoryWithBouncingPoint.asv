@@ -4,8 +4,8 @@ clear
 clc
 
 %% Reading the video
-video = vision.VideoFileReader('CAM1.mov');
-video_frames = read(VideoReader('CAM1.mov'));
+video = vision.VideoFileReader('Cam3.mov');
+video_frames = read(VideoReader('Cam3.mov'));
 player = vision.DeployableVideoPlayer('Location', [10,100]);
 
 %%Detect the ball
@@ -14,10 +14,10 @@ fgPlayer = vision.DeployableVideoPlayer('Location', player.Location + [500 120])
 blobAnalyzer = vision.BlobAnalysis('AreaOutputPort', true, 'MinimumBlobArea', 10, 'CentroidOutputPort', true);
 
 frameNr = 1;
-crop_x = 100;
-crop_y = 10;
-crop_width = 1000;
-crop_height = 1000;
+crop_x = 800;%100;
+crop_y = 30;%10;
+crop_width = 1000;%1000;
+crop_height = 1000;%1000;
 while ~isDone(video)
     
     im = step(video);
@@ -102,8 +102,8 @@ g = [1601;745;1];
 h = [1004;684;1];
 
 
-%[a,b,c,d] = get_points(bounce_image_wall, 'wall');
-%[e,f,g,h] = get_points(bounce_image_floor, 'floor');
+%[a,b,c,d] = get_points(bounce_image_wall, 'wall');  % Using fixed points instead
+%[e,f,g,h] = get_points(bounce_image_floor, 'floor'); % Using fixed points instead
 
 rect_wall = [0 -183;0 0;640 0;640 -183];
 rect_floor = [0 0;0 549;640,549;640,0];
@@ -124,13 +124,17 @@ subplot(121)
 [rows_wall, columns_wall, numberOfColorChannels] = size(im_wall);
 
 % determining if it is a valid serve or not
-valid = check_if_valid(x
+valid = check_if_valid(abs(y_wall),x_floor, y_floor, 3,4);
+color = 'green';
+if ~valid
+    color = 'red';
+end
 
-im_wall = insertShape(im_wall,"FilledCircle",[x_wall, rows_wall+y_wall 4], 'Color', 'red');
+im_wall = insertShape(im_wall,"FilledCircle",[x_wall, rows_wall+y_wall 4], 'Color', color);
 imshow(im_wall);
 title('Wall Bounce');
 subplot(122)
-im_floor = insertShape(im_floor,"FilledCircle",[x_floor, y_floor 4]);
+im_floor = insertShape(im_floor,"FilledCircle",[x_floor, y_floor 4], 'Color', color);
 imshow(im_floor);
 title('Floor Bounce')
 

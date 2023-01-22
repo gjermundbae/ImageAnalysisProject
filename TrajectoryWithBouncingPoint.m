@@ -101,15 +101,15 @@ f = [50;910;1];
 g = [1601;745;1];
 h = [1004;684;1];
 
-
-%[a,b,c,d] = get_points(bounce_image_wall, 'wall');
-%[e,f,g,h] = get_points(bounce_image_floor, 'floor');
+% Commented out because we are using fixed points instead of clicking
+%[a,b,c,d] = get_points(bounce_image_wall, 'wall'); 
+%[e,f,g,h] = get_points(bounce_image_floor, 'floor'); 
 
 rect_wall = [0 -183;0 0;640 0;640 -183];
 rect_floor = [0 0;0 549;640,549;640,0];
 
-tr_wall = make_transform(a,b,c,d, rect_wall);
-tr_floor = make_transform(e,f,g,h, rect_floor);
+tr_wall =  maketform('projective',[a(1:2)';b(1:2)';c(1:2)';d(1:2)'],rect_wall);
+tr_floor = maketform('projective',[e(1:2)';f(1:2)';g(1:2)';h(1:2)'],rect_floor);
 
 % Sending the contact points through the transformation as well
 [x_wall, y_wall] = tformfwd(tr_wall,bounce_wall_pos(1),bounce_wall_pos(2));
