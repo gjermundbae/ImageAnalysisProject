@@ -2,3 +2,15 @@ Project in the course Image Analysis and Computer Vision
 Our task is to implement tracking and analysis on a ball sport from footage.
 
 Before viewing the code, it is recommended to take a look on the image of squah court dimensions.
+
+TrajectoryWithBouncingPoint.m is the main file, and is the only file you need to run. 
+
+However, it is also important that the matlabfiles; check_if_valid.m, get_points.m and transform_bounce.m is in the same folder as our main file, TrajectoryWithBouncingPoint.
+They are important functions made for serve validation. 
+
+Furthermore, Cam1.mov, Cam2.mov and Cam3.mov are all videos that is used for our trajectory tracking. 
+1 and 2 are filmed with the same angle, and 3 is slighty different. The script right now is therefore tuned to the first to videos, and it is not necessary to change parameters if you are running the script with these two videos. 
+
+For more information, the project-description and -method is thoroughly described in the containing report. 
+
+
